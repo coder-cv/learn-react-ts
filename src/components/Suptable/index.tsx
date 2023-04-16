@@ -153,7 +153,7 @@ function SupTable(props:any){
         <a
           key="editable"
           onClick={() => {
-            action?.startEditable?.(record.index);
+            action?.startEditable?.(record.id);
           }}
         >
           编辑
