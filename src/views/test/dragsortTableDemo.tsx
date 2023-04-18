@@ -57,37 +57,39 @@ const data = [
 
 const dragTable =  () => {
   const [dataSource, setDataSource] = useState(data);
-  const SortableItem = SortableElement((props: any) => <tr {...props} />);
-  const SortContainer = SortableContainer((props: any) => <tbody {...props} />);
+  // const SortableItem = SortableElement((props: any) => <tr {...props} />);
+  // const SortContainer = SortableContainer((props: any) => <tbody {...props} />);
 
-  const onSortEnd = useRefFunction(
-    ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
-      if (oldIndex !== newIndex) {
-        const newData = arrayMoveImmutable({
-          array: [...dataSource],
-          fromIndex: oldIndex,
-          toIndex: newIndex,
-        }).filter((el) => !!el);
-        setDataSource([...newData]);
-      }
-    },
-  );
+  // const onSortEnd = useRefFunction(
+  //   ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
+  //     if (oldIndex !== newIndex) {
+  //       const newData = arrayMoveImmutable({
+  //         array: [...dataSource],
+  //         fromIndex: oldIndex,
+  //         toIndex: newIndex,
+  //       }).filter((el) => !!el);
+  //       setDataSource([...newData]);
+  //     }
+  //   },
+  // );
 
   const DraggableContainer = (props: any) => (
-    <SortContainer
-      useDragHandle
-      disableAutoscroll
-      helperClass="row-dragging"
-      onSortEnd={onSortEnd}
-      {...props}
-    />
+    // <SortContainer
+    //   useDragHandle
+    //   disableAutoscroll
+    //   helperClass="row-dragging"
+    //   onSortEnd={onSortEnd}
+    //   {...props}
+    // />
+    <tbody {...props} />
   );
 
   const DraggableBodyRow = (props: any) => {
     const { className, style, ...restProps } = props;
     // function findIndex base on Table rowKey props and should always be a right array index
     const index = dataSource.findIndex((x) => x.index === restProps['data-row-key']);
-    return <SortableItem index={index} {...restProps} />;
+    return <tr draggable="true" {...restProps}/>
+    // return <SortableItem index={index} {...restProps} />;
   };
 
   return (

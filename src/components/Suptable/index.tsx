@@ -24,13 +24,7 @@ const defaultData: DataSourceType[] = [
     id: 624748504,
     title: '文件一',
     created_at: '1590486176000',
-    children: [
-      {
-        id: 6247481231,
-        title: '子文件',
-        created_at: '1590486176000',
-      }
-    ]
+
   },
   {
     id: 624691229,
@@ -81,14 +75,14 @@ function SupTable(props:any){
   const SortContainer = SortableContainer((props: any) => <tbody {...props} />);
   const onSortEnd = useRefFunction(
     ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
-      if (oldIndex !== newIndex) {
-        const newData = arrayMoveImmutable({
-          array: [...dataSource],
-          fromIndex: oldIndex,
-          toIndex: newIndex,
-        }).filter((el) => !!el);
-        setDataSource([...newData]);
-      }
+      // if (oldIndex !== newIndex) {
+      //   const newData = arrayMoveImmutable({
+      //     array: [...dataSource],
+      //     fromIndex: oldIndex,
+      //     toIndex: newIndex,
+      //   }).filter((el) => !!el);
+      //   setDataSource([...newData]);
+      // }
     },
   );
 
