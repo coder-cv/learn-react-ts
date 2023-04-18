@@ -8,10 +8,11 @@ import {
 import React, { useState } from 'react'
 
 import { DraggableItem } from '@/views/dndDraggable/DraggableItem'
-import { DndContext, DragOverlay } from '@dnd-kit/core'
+import { DndContext, DragOverlay,MouseSensor, TouchSensor, useSensor,useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { DragOutlined } from '@ant-design/icons';
+import { DragOutlined } from '@ant-design/icons'
+import { Breadcrumb } from 'antd'
 
 const waitTime = (time: number) => {
   return new Promise((resolve) => {
@@ -45,10 +46,12 @@ const defaultData: DataSourceType[] = [
   }
 ]
 
-
 const editTable = () => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([])
   const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([])
+  const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
+    'bottom'
+  )
 
   const columns: ProColumns[] = [
     {
@@ -57,7 +60,7 @@ const editTable = () => {
       width: 60,
       className: 'drag-visible',
       readonly: true,
-      render: () => <DragOutlined />,
+      render: () => <DragOutlined />
     },
     {
       title: '文件名',
@@ -109,17 +112,82 @@ const editTable = () => {
     alert('调接口')
   }
 
+  const mouseSensor = useSensor(MouseSensor, {
+    // Require the mouse to move by 10 pixels before activating
+    activationConstraint: {
+      delay: 1000,
+      distance: 10,
+    },
+  });
+  // const touchSensor = useSensor(TouchSensor, {
+  //   // Press delay of 250ms, with tolerance of 5px of movement
+  //   activationConstraint: {
+  //     delay: 250,
+  //     tolerance: 5,
+  //   },
+  // });
+
+  const sensors = useSensors(
+    mouseSensor,
+    // touchSensor,
+  )
+
   return (
     <>
       <DndContext
         modifiers={[restrictToVerticalAxis]}
         onDragEnd={handleDragEnd}
+        // sensors={sensors}
       >
+        <Breadcrumb
+          items={[
+            {
+              title: '一级目录'
+            },
+            {
+              title: '二级目录'
+            },
+            {
+              title: 'Editable'
+            }
+          ]}
+        />
         <EditableProTable<DataSourceType>
           rowKey="id"
           className="dnd"
           headerTitle="可编辑"
+          recordCreatorProps={
+            position !== 'hidden'
+              ? {
+                  position: position as 'top',
+                  record: () => ({ id: (Math.random() * 1000000).toFixed(0) })
+                }
+              : false
+          }
           loading={false}
+          toolBarRender={() => [
+            <ProFormRadio.Group
+              key="render"
+              fieldProps={{
+                value: position,
+                onChange: (e) => setPosition(e.target.value)
+              }}
+              options={[
+                {
+                  label: '添加到顶部',
+                  value: 'top'
+                },
+                {
+                  label: '添加到底部',
+                  value: 'bottom'
+                },
+                {
+                  label: '隐藏',
+                  value: 'hidden'
+                }
+              ]}
+            />
+          ]}
           dataSource={dataSource}
           columns={columns}
           components={{
@@ -142,7 +210,7 @@ const editTable = () => {
             onChange: setEditableRowKeys
           }}
         />
-        {/* <ProCard title="表格数据" headerBordered collapsible defaultCollapsed>
+        <ProCard title="表格数据" headerBordered collapsible defaultCollapsed>
           <ProFormField
             ignoreFormItem
             fieldProps={{
@@ -154,7 +222,7 @@ const editTable = () => {
             valueType="jsonCode"
             text={JSON.stringify(dataSource)}
           />
-        </ProCard> */}
+        </ProCard>
         <DragOverlay></DragOverlay>
       </DndContext>
     </>
